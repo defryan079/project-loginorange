@@ -6,7 +6,7 @@ class LoginPage {
         loginBtn: () => cy.get('.oxd-button'),
         dashboardTitle: () => cy.get('.oxd-topbar-header-title'),
         errorMessage: () => cy.get('.oxd-alert-content-text'),
-        requiredMessage: () => cy.get('.oxd-input-group > .oxd-text--error').first()
+        requiredMessage: () => cy.get('.oxd-input-field-error-message')
     }
 
     // Daftar perintah
