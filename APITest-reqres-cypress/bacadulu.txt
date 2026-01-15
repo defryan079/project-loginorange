@@ -1,1 +1,0 @@
-API biasanya bakalan kena blokir kalau diup lgsg di github, jadi saya taruh di .gitignore
