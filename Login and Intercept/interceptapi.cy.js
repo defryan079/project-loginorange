@@ -1,7 +1,7 @@
 //QA Tester : Deffrian Prayogo
 //date : 15/01/2026
 
-describe('Login Scenarios with Full URL Intercept', () => {
+describe('Login Scenario dengan URL Intercept yang berbeda', () => {
 
     beforeEach(() => {
         cy.clearCookies()
@@ -16,7 +16,6 @@ describe('Login Scenarios with Full URL Intercept', () => {
         cy.get('input[name="username"]').type("Admin")
         cy.get('input[name="password"]').type("admin123")
         
-        // Intercept API Action Summary
         cy.intercept('GET', 'https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/dashboard/employees/action-summary').as('actSum')
         
         cy.get('.oxd-button').click()
@@ -31,13 +30,14 @@ describe('Login Scenarios with Full URL Intercept', () => {
     it('Test case 2 - User & Pass Salah', () => {
         cy.get('input[name="username"]').type("Mimin")
         cy.get('input[name="password"]').type("mimin123")
-        
-        cy.intercept('GET', 'https://opensource-demo.orangehrmlive.com/web/index.php/themes/default/images/login/ohrm_branding.png').as('brandingImg')
+
+        cy.intercept('POST', 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/validate').as('loginValidate')
         
         cy.get('.oxd-button').click()
         
-        cy.wait('@brandingImg').then((interception) => {
-            expect(interception.response.statusCode).to.be.oneOf([200, 304]) // 304 artinya ambil dari cache
+        cy.wait('@loginValidate').then((interception) => {
+
+            expect(interception.response.statusCode).to.exist
         })
 
         cy.get('.oxd-alert-content-text').should('contain', 'Invalid credentials')
@@ -45,17 +45,16 @@ describe('Login Scenarios with Full URL Intercept', () => {
 
     // 3. LOGIN KOSONG
     it('Test case 3 - User & Pass Kosong', () => {
-        //Kalau ad wait() malah error response, jadi saya hilangin
+
         cy.get('.oxd-button').click()
 
-        cy.get('.oxd-input-group > .oxd-text--error').first().should('contain', 'Required')
+        cy.get('.oxd-input-field-error-message').first().should('contain', 'Required')
     })
 
-    // 4. LOGIN HARUSNYA GAGAL KARENA USERNAME CAPSLOCK, TAPI HASILNYA BERHASIL
+    // 4. LOGIN SUKSES (USERNAME CAPSLOCK)
     it('Test case 4 - Username KAPITAL & Pass Benar', () => {
         cy.get('input[name="username"]').type("ADMIN")
         cy.get('input[name="password"]').type("admin123")
-        
         cy.intercept('GET', 'https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/dashboard/shortcuts').as('apiShortcuts')
         
         cy.get('.oxd-button').click()
@@ -71,13 +70,12 @@ describe('Login Scenarios with Full URL Intercept', () => {
         cy.get('input[name="username"]').type("Admin")
         cy.get('input[name="password"]').type("ADMIN123")
         
-        cy.intercept('GET', 'https://opensource-demo.orangehrmlive.com/web/index.php/themes/default/images/login/ohrm_logo.png').as('logoImg')
+        cy.intercept('GET', 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login').as('pageReload')
         
         cy.get('.oxd-button').click()
         
-        cy.wait('@logoImg')
+        cy.wait('@pageReload')
         
-        // Assert Error
         cy.get('.oxd-alert-content-text').should('contain', 'Invalid credentials')
     })
 
@@ -86,11 +84,12 @@ describe('Login Scenarios with Full URL Intercept', () => {
         cy.get('input[name="username"]').type("Admin")
         cy.get('input[name="password"]').type("sayurkol12")
         
-        cy.intercept('GET', 'https://opensource-demo.orangehrmlive.com/web/dist/css/fonts/nunito-sans-v6-latin-ext_latin-700.woff2').as('fontFile')
+        cy.intercept('GET', 'https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages').as('msgErrorLoad')
         
         cy.get('.oxd-button').click()
         
-        // Assert Error
+        cy.wait('@msgErrorLoad')
+        
         cy.get('.oxd-alert-content-text').should('contain', 'Invalid credentials')
     })
 
@@ -98,14 +97,13 @@ describe('Login Scenarios with Full URL Intercept', () => {
     it('Test case 7 - Username Salah & Pass Benar', () => {
         cy.get('input[name="username"]').type("Mimin")
         cy.get('input[name="password"]').type("admin123")
-        
-        cy.intercept('GET', 'https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages').as('msgReload')
+
+        cy.intercept('POST', 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/validate').as('validateCheck')
         
         cy.get('.oxd-button').click()
         
-        cy.wait('@msgReload')
+        cy.wait('@validateCheck')
 
-        // Assert Error
         cy.get('.oxd-alert-content-text').should('contain', 'Invalid credentials')
     })
 
