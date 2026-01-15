@@ -1,0 +1,2 @@
+Untuk bagian ini saya pisahkam antara file utama di (e2e) dan file LoginPage. Jdi perlu mendownload semua jika ingin di Run.
+Login Page berisi file2 yang akan dipanggil (seperti modul)
