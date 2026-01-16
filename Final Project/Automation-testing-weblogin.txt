@@ -1,1 +1,2 @@
-coming soon
+Saya bagi file menjadi 2 bagian, e2e ialah file utama main.cy.js
+file kedua adalah modul logPage.js dan DashPage.js yang berfungsi untuk POM
